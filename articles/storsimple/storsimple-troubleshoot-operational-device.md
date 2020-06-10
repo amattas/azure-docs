@@ -3,7 +3,7 @@ title: Troubleshoot a deployed StorSimple device | Microsoft Docs
 description: Describes how to diagnose and fix errors that occur on a StorSimple device that is currently deployed and operational.
 services: storsimple
 documentationcenter: NA
-author: SharS
+author: twooley
 manager: carmonm
 editor: ''
 
@@ -14,7 +14,7 @@ ms.topic: article
 ms.tgt_pltfrm: NA
 ms.workload: TBD
 ms.date: 11/03/2017
-ms.author: v-sharos
+ms.author: twooley
 
 ---
 # Troubleshoot an operational StorSimple device
@@ -62,5 +62,5 @@ Errors are listed in numeric order.
 ## Next steps
 If you are unable to resolve the problem, [contact Microsoft Support](storsimple-contact-microsoft-support.md) for assistance. 
 
-[1]: https://technet.microsoft.com/en-us/%5Clibrary/Dn688135(v=WPS.630).aspx
-[2]: https://technet.microsoft.com/en-us/%5Clibrary/Dn715782(v=WPS.630).aspx
+[1]: https://technet.microsoft.com/%5Clibrary/Dn688135(v=WPS.630).aspx
+[2]: https://technet.microsoft.com/%5Clibrary/Dn715782(v=WPS.630).aspx

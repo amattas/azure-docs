@@ -1,30 +1,26 @@
 ---
-title: Introduction to Data Factory, a data integration service | Microsoft Docs
+title: Introduction to Data Factory, a data integration service 
 description: 'Learn what Azure Data Factory is: A cloud data integration service that orchestrates and automates movement and transformation of data.'
 services: data-factory
 documentationcenter: ''
-author: sharonlo101
-manager: jhubbard
-editor: monicar
-
+author: djpmsft
+ms.author: daperlov
+manager: jroth
+ms.reviewer: maghan
 ms.assetid: cec68cb5-ca0d-473b-8ae8-35de949a009e
 ms.service: data-factory
 ms.workload: data-services
-ms.tgt_pltfrm: na
-ms.devlang: na
-ms.topic: get-started-article
-ms.date: 10/15/2017
-ms.author: shlo
-
-robots: noindex
+ms.topic: overview
+ms.date: 01/22/2018
 ---
+
 # Introduction to Azure Data Factory 
 > [!div class="op_single_selector" title1="Select the version of Data Factory service you are using:"]
-> * [Version 1 - GA](data-factory-introduction.md)
-> * [Version 2 - Preview](../introduction.md)
+> * [Version 1](data-factory-introduction.md)
+> * [Version 2 (current version)](../introduction.md)
 
 > [!NOTE]
-> This article applies to version 1 of Azure Data Factory, which is generally available (GA). If you are using version 2 of the Data Factory service, which is in preview, see [Introduction to Data Factory V2](../introduction.md).
+> This article applies to version 1 of Azure Data Factory. If you are using the current version of the Data Factory service, see [Introduction to Data Factory V2](../introduction.md).
 
 
 ## What is Azure Data Factory?
@@ -111,7 +107,7 @@ For example, an Azure Storage-linked service specifies a connection string with 
 
 Linked services are used for two reasons in Data Factory:
 
-* To represent a *data store* that includes, but isn't limited to, an on-premises SQL Server database, Oracle database, file share, or Azure blob storage account. See the [Data movement activities](#data-movement-activities) section for a list of supported data stores.
+* To represent a *data store* that includes, but isn't limited to, a SQL Server database, Oracle database, file share, or Azure blob storage account. See the [Data movement activities](#data-movement-activities) section for a list of supported data stores.
 
 * To represent a *compute resource* that can host the execution of an activity. For example, the HDInsightHive activity runs on an HDInsight Hadoop cluster. See the [Data transformation activities](#data-transformation-activities) section for a list of supported compute environments.
 
@@ -131,7 +127,6 @@ For an example, let's assume that your compute environments such as Azure HDInsi
 ## Get started with creating a pipeline
 You can use one of these tools or APIs to create data pipelines in Azure Data Factory: 
 
-- Azure portal
 - Visual Studio
 - PowerShell
 - .NET API
@@ -144,4 +139,4 @@ To learn how to build data factories with data pipelines, follow the step-by-ste
 | --- | --- |
 | [Move data between two cloud data stores](data-factory-copy-data-from-azure-blob-storage-to-sql-database.md) |Create a data factory with a pipeline that moves data from blob storage to a SQL database. |
 | [Transform data by using Hadoop cluster](data-factory-build-your-first-pipeline.md) |Build your first Azure data factory with a data pipeline that processes data by running a Hive script on an Azure HDInsight (Hadoop) cluster. |
-| [Move data between an on-premises data store and a cloud data store by using Data Management Gateway](data-factory-move-data-between-onprem-and-cloud.md) |Build a data factory with a pipeline that moves data from an on-premises SQL Server database to an Azure blob. As part of the walkthrough, you install and configure the Data Management Gateway on your machine. |
+| [Move data between an on-premises data store and a cloud data store by using Data Management Gateway](data-factory-move-data-between-onprem-and-cloud.md) |Build a data factory with a pipeline that moves data from a SQL Server database to an Azure blob. As part of the walkthrough, you install and configure the Data Management Gateway on your machine. |

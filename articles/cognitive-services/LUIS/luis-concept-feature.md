@@ -1,63 +1,158 @@
 ---
-title: Understand features in LUIS apps in Azure | Microsoft Docs
-description: Learn about features, which help improve a LUIS app's performance. Features include phrase lists and patterns for recognizing regular expressions.
-services: cognitive-services
-author: DeniseMak
-manager: hsalama
-
-ms.service: cognitive-services
-ms.technology: luis
-ms.topic: article
-ms.date: 05/23/2017
-ms.author: cahann
+title: Features - LUIS
+description: Add features to a language model to provide hints about how to recognize input that you want to label or classify.
+ms.topic: conceptual
+ms.date: 05/14/2020
 ---
-# Features in LUIS
+# Machine-learning (ML) features
 
-In machine learning, a *feature* is a distinguishing trait or attribute of data that your system observes. 
+In machine learning, a **feature** is a distinguishing trait or attribute of data that your system observes.
 
-You add features to a language model, to provide hints about how to recognize input that you want to label or classify. Features help LUIS recognize both intents and entities, but features are not intents or entities themselves. Instead, features might provide examples of related terms, or a pattern to recognize in related terms.  
+Machine learning features give LUIS important cues for where to look for things that will distinguish a concept. They are hints that LUIS can use, but not hard rules.  These hints are used in conjunction with the labels to find the data.
 
-## Types of features
+ LUIS supports both phrase lists and using other entities as features:
+* Phrase list feature
+* Model (intent or entity) as a feature
 
-LUIS offers the following types of features:
+Features should be considered a necessary part of your schema design.
 
+## A phrase list for a particular concept
 
-| Type          | Description           |
-| ------------- |-----------------------|
-| Phrase list      | A phrase list includes a group of values (words or phrases) that belong to the same class and must be treated similarly (for example, names of cities or products). What LUIS learns about one of them is automatically applied to the others as well.|
-| Pattern      | A pattern specifies a regular expression to help LUIS recognize regular patterns that are frequently used in your application's domain. Some examples are the pattern of flight numbers in a travel app or product codes in a shopping app. | 
+A phrase list is a list of words or phrases that encapsulates a particular concept.
 
-## How to use phrase lists
-For example, in a travel agent app, you can create a phrase list named "Cities" that contains the values London, Paris, and Cairo. If you label one of these values as an entity, LUIS learns to recognize the others. 
+When adding a phrase list, you can set the feature as:
+* **[Global](#global-features)**. A global feature applies to the entire app.
 
-A phrase list may be exchangeable or non-exchangeable. An *exchangeable* phrase list is for values that are synonyms, and a *non-exchangeable* phrase list is intended for values that aren't synonyms but are similar in another way. 
+### When to use a phrase list
 
-### Use phrase lists for terms that LUIS has difficulty recognizing
-Phrase lists are a good way to tune the performance of your LUIS app. If your app has trouble classifying some utterances as the correct intent, or recognizing some entities, think about whether the utterances contain unusual words, or words that might be ambiguous in meaning. These words are good candidates to include in a phrase list feature.
+When you need your LUIS app to be able to generalize and identify new items for the concept, use a phrase list. Phrase lists are like domain-specific vocabulary that help with enhancing the quality of understanding of both intents and entities.
 
-### Use phrase lists for rare, proprietary, and foreign words
-LUIS may be unable to recognize rare and proprietary words, as well as foreign words (outside of the culture of the app), and therefore they should be added to a phrase list feature. 
-This phrase list should be marked non-exchangeable, to indicate that the set of rare words form a class that LUIS should learn to recognize, but they are not synonyms or exchangeable with each other.
+### How to use a phrase list
 
-> [!NOTE] 
-> A phrase list feature is not an instruction to LUIS to perform strict matching or always label all terms in the phrase list exactly the same. It is simply a hint. For example, you could have a phrase list that indicates that "Patti" and "Selma" are names, but LUIS can still use contextual information to recognize that they mean something different in "make a reservation for 2 at patti's diner for dinner" and "give me driving directions to selma, georgia". 
+With a phrase list, LUIS considers context and generalizes to identify items that are similar to, but not an exact text match.
 
-### When to use phrase lists instead of list entities
+Steps to use a phrase list:
+* Start with a machine-learning entity
+    * Add example utterances
+    * Label with a machine-learning entity
+* Add a phrase list
+    * Add words with similar meaning - do **not** add every possible word or phrase. Instead, add a few words or phrases at a time, then retrain and publish.
+    * Review and add suggested words
 
- * When you use a phrase list, LUIS can still take context into account and generalize to identify items that are similar to, but not an exact match as items in a list. If you need your LUIS app to be able to generalize and identify new items in a category, it's better to use a phrase list.
- * In contrast, a list entity explicitly defines every value an entity can take, and only identifies values those that match exactly. A list entity may be appropriate for an app in which all instances of an entity are known and don't change often, like the food items on a restaurant menu that changes infrequently. In a system in which you want to be able to recognize new instances of an entity, like a meeting scheduler that should recognize the names of new contacts, or an inventory app that should recognize new products, it's better to use another type of entity and then use phrase list features to help guide LUIS to recognize examples of the entity.
+### A typical scenario for a phrase list
 
+A typical scenario for a phrase list is to boost words related to a specific idea.
 
-## How to use patterns
-The regular expression, or *regex*, in a pattern feature provides a hint to LUIS that helps it see the difference between words that match the regex and words that don't. 
+An example of words that may need a phrase list to boost their significance are medical terms. The terms can have specific physical, chemical, therapeutic, or abstract meaning. LUIS won't know the terms are important to your subject domain without a phrase list.
 
-For example, a pattern can help recognize a `KnowledgeBaseArticle` entity if the regex matches the terms in the entity, like the regex `"kb\d+"` for identifying knowledge base article IDs like `kb8732827` or `kb23737`.  In addition, you also need to enter some utterances and label the entity. For example, label the utterance `"look for article kb22716"` so that `"kb22716"` is tagged as a `KnowledgeBaseArticle` entity.
+If you want to extract the medical terms:
+* First create example utterances and label medical terms within those utterances.
+* Then create a phrase list with examples of the terms within the subject domain. This phrase list should include the actual term you labeled and other terms that describe the same concept.
+* Add the phrase list to the entity or subentity that extracts the concept used in the phrase list. The most common scenario is a component (child) of a machine-learning entity. If the phrase list should be applied across all intents or entities, mark the phrase list as a global phrase list. The `enabledForAllModels` flag controls this model scope in the API.
 
-> [!NOTE] 
-> A pattern feature is not an instruction to LUIS to perform strict matching or label all terms that match the expression exactly the same. It is simply a hint. For example, if you use a pattern to tell LUIS that airport codes in your travel app consist of three letters, you shouldn't expect (and don't want) LUIS to always label every three-letter word as an airport code.
+<a name="how-to-use-phrase-lists"></a>
+<a name="how-to-use-a-phrase-lists"></a>
+<a name="phrase-lists-help-identify-simple-exchangeable-entities"></a>
 
+## A model as a feature helps another model
 
+You can add a model (intent or entity) as a feature to another model (intent or entity). By adding an existing intent or entity as a feature, your adding a well-defined concept with labeled examples.
+
+When adding a model as a feature, you can set the feature as:
+* **[Required](#required-features)**. A required feature has to be found in order for the model to be returned from the prediction endpoint.
+* **[Global](#global-features)**. A global feature applies to the entire app.
+
+### When to use an entity as a feature to an intent
+
+Add an entity as a feature to an intent when the detection of that entity is significant for the intent.
+
+For example, if the intent is for booking a flight, `BookFlight`, and the entity is ticket information (such as the number of seats, origin, and destination), then finding the ticket information entity should add significant weight to the prediction of the `BookFlight` intent.
+
+### When to use an entity as a feature to another entity
+
+An entity (A) should be added as a feature to another entity (B) when the detection of that entity (A) is significant for the prediction of entity (B).
+
+For example, if n shipping address entity contained a street address subentity, then finding the street address subentity adds significant weight to the prediction for the shipping address entity.
+
+* Shipping address (machine learned entity)
+    * Street number (subentity)
+    * Street address (subentity)
+    * City (subentity)
+    * State or Province (subentity)
+    * Country/Region (subentity)
+    * Postal code (subentity)
+
+## Nested subentities with features
+
+A machine learned subentity indicates a concept is present to the parent entity, whether that parent is another subentity or the top entity. The value of the subentity acts as a feature to its parent.
+
+A subentity can have both a phrase list as a feature as well as a model (another entity) as a feature.
+
+When the subentity has a phrase list, this will boost the vocabulary of the concept but won't add any information to the JSON response of the prediction.
+
+When the subentity has a feature of another entity, the JSON response includes the extracted data of that other entity.
+
+## Required features
+
+A required feature has to be found in order for the model to be returned from the prediction endpoint. Use a required feature when you know your incoming data must match the feature.
+
+If the utterance text doesn't match the required feature, it will not be extracted.
+
+**A required feature uses a non-machine learned entity**:
+* Regular expression entity
+* List entity
+* Prebuilt entity
+
+What are good features to mark as required? If you are confident your model will be found in the data, set the feature as required. A required feature doesn't return anything, if it isn't found.
+
+Continuing with the example of the shipping address:
+* Shipping address (machine learned entity)
+    * Street number (subentity)
+    * Street address (subentity)
+    * Street name (subentity)
+    * City (subentity)
+    * State or Province (subentity)
+    * Country/Region (subentity)
+    * Postal code (subentity)
+
+### Required feature using prebuilt entities
+
+The city, state, and country/region are generally a closed set of lists, meaning they don't change much over time. These entities could have the relevant recommended features and those features could be marked as required. That means the entire shipping address is not returned is the entities with required features are not found.
+
+What if the city, state, or country/region are in the utterance but either in a location or slang that LUIS doesn't expect? If you want to provide some post processing to help resolve the entity, due to a low confidence score from LUIS, do not mark the feature as required.
+
+Another example of a required feature for the shipping address is to make the street number a required [prebuilt](luis-reference-prebuilt-entities.md) number. This allows a user to enter "1 Microsoft Way" or "One Microsoft Way". Both will resolve to a number of "1" for the Street number subentity.
+
+### Required feature using list entities
+
+A [list entity](reference-entity-list.md) is used as a list of canonical names along with their synonyms. As a required feature, if the utterance doesn't include either the canonical name or a synonym, then the entity isn't returned as part of the prediction endpoint.
+
+Continuing with the shipping address example, suppose your company only ships to a limited set of countries/regions. You can create a list entity that includes several ways your customer may reference the country. If LUIS doesn't find an exact match within the text of the utterance, then the entity (that has the required feature of the list entity) isn't returned in the prediction.
+
+|Canonical name|Synonyms|
+|--|--|
+|United States|U.S.<br>U.S.A<br>US<br>USA<br>0|
+
+The client application, such as a chat bot can ask a follow-question, so the customer understands that the country/region selection is limited and _required_.
+
+### Required feature using regular expression entities
+
+A [regular expression entity](reference-entity-regular-expression.md) used as a required feature provides rich text-matching capabilities.
+
+Continuing with the shipping address, you can create a regular expression that captures syntax rules of the country/region postal codes.
+
+## Global features
+
+While the most common use is to apply a feature to a specific model, you can configure the feature as a **global feature** to apply it to your entire application.
+
+The most common use for a global feature is to add an additional vocabulary, such as words from another language, to the app. If your customers use a primary language, but expect to be able to use another language within the same utterance, you can add a feature that includes words from the secondary language.
+
+Because the user expected to use the second language across any intent or entity, it should be added in a phrase list with the phrase list configured as a global feature.
+
+## Best practices
+Learn [best practices](luis-concept-best-practices.md).
 
 ## Next steps
 
-See [Add Features](Add-Features.md) to learn more about how to add features to your LUIS app.
+* [Extend](schema-change-prediction-runtime.md) your app models at prediction runtime
+* See [Add Features](luis-how-to-add-features.md) to learn more about how to add features to your LUIS app.

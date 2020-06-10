@@ -1,25 +1,26 @@
 ---
-title: Azure Event Grid event hubs event schema
+title: Azure Event Hubs as Event Grid source
 description: Describes the properties that are provided for event hubs events with Azure Event Grid
 services: event-grid
-author: tfitzmac
-manager: timlt
+author: spelluru
 
 ms.service: event-grid
-ms.topic: article
-ms.date: 11/07/2017
-ms.author: tomfitz
+ms.topic: conceptual
+ms.date: 04/09/2020
+ms.author: spelluru
 ---
 
-# Azure Event Grid event schema for event hubs
+# Azure Event Hubs as an Event Grid source
 
 This article provides the properties and schema for event hubs events. For an introduction to event schemas, see [Azure Event Grid event schema](event-schema.md).
+
+## Event Grid event schema
 
 ### Available event types
 
 Event Hubs emits the **Microsoft.EventHub.CaptureFileCreated** event type when a capture file is created.
 
-## Example event
+### Example event
 
 This sample event shows the schema of an event hubs event raised when the capture feature stores a file: 
 
@@ -41,23 +42,27 @@ This sample event shows the schema of an event hubs event raised when the captur
             "lastSequenceNumber": 3899,
             "firstEnqueueTime": "2017-08-31T19:12:14.674Z",
             "lastEnqueueTime": "2017-08-31T19:12:44.309Z"
-        }
+        },
+        "dataVersion": "",
+        "metadataVersion": "1"
     }
 ]
 ```
 
-## Event properties
+### Event properties
 
 An event has the following top-level data:
 
 | Property | Type | Description |
 | -------- | ---- | ----------- |
-| topic | string | Full resource path to the event source. This field is not writeable. |
+| topic | string | Full resource path to the event source. This field is not writeable. Event Grid provides this value. |
 | subject | string | Publisher-defined path to the event subject. |
 | eventType | string | One of the registered event types for this event source. |
 | eventTime | string | The time the event is generated based on the provider's UTC time. |
 | id | string | Unique identifier for the event. |
 | data | object | Event hub event data. |
+| dataVersion | string | The schema version of the data object. The publisher defines the schema version. |
+| metadataVersion | string | The schema version of the event metadata. Event Grid defines the schema of the top-level properties. Event Grid provides this value. |
 
 The data object has the following properties:
 
@@ -72,6 +77,12 @@ The data object has the following properties:
 | lastSequenceNumber | integer | The last sequence number from the queue. |
 | firstEnqueueTime | string | The first time from the queue. |
 | lastEnqueueTime | string | The last time from the queue. |
+
+## Tutorials and how-tos
+
+|Title  |Description  |
+|---------|---------|
+| [Tutorial: stream big data into a data warehouse](event-grid-event-hubs-integration.md) | When Event Hubs creates a Capture file, Event Grid sends an event to a function app. The app retrieves the Capture file and migrates data to a data warehouse. |
 
 ## Next steps
 

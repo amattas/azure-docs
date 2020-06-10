@@ -1,102 +1,48 @@
 ---
 title: Azure Event Grid security and authentication
-description: Describes Azure Event Grid and its concepts.
+description: This article describes different ways of authenticating access to your Event Grid resources (WebHook, subscriptions, custom topics)
 services: event-grid
-author: banisadr
+author: femila
 manager: timlt
 
 ms.service: event-grid
-ms.topic: article
-ms.date: 09/18/2017
-ms.author: babanisa
+ms.topic: conceptual
+ms.date: 03/06/2020
+ms.author: femila
 ---
-# Event Grid security and authentication 
 
-Azure Event Grid has three types of authentication:
+# Authenticating access to Azure Event Grid resources
+This article provides information on the following scenarios:  
 
-* Event subscriptions
-* Event publishing
-* WebHook event delivery
+- Authenticate clients that publish events to Azure Event Grid topics using Shared Access Signature (SAS) or key. 
+- Secure the webhook endpoint that's used to receive events from Event Grid using Azure Active Directory (Azure AD) or a shared secret.
 
-## WebHook Event delivery
-
-Webhooks are one of many ways to receive events in real time from Azure Event Grid. Every time there is a new event ready to be delivered, the Event Grid Webhook seeds an HTTP request to the configured HTTP endpoint with the event in the body.
-
-When you register your own WebHook endpoint with Event Grid, it sends you a POST request with a simple validation code in order to prove endpoint ownership. Your app needs to respond by echoing back the validation code. Event Grid does not deliver events to WebHook endpoints that have not passed the validation.
-
-### Validation details
-
-* At the time of event subscription creation/update, Event Grid posts a "SubscriptionValidationEvent" event to the target endpoint.
-* The event contains a header value "Aeg-Event-Type: SubscriptionValidation".
-* The event body has the same schema as other Event Grid events.
-* The event data includes a "validationCode" property with a randomly generated string. For example, "validationCode: acb13…".
-
-An example SubscriptionValidationEvent is shown in the following example:
-
-```json
-[{
-  "id": "2d1781af-3a4c-4d7c-bd0c-e34b19da4e66",
-  "topic": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-  "subject": "",
-  "data": {
-    "validationCode": "512d38b6-c7b8-40c8-89fe-f46f9e9622b6"
-  },
-  "eventType": "Microsoft.EventGrid.SubscriptionValidationEvent",
-  "eventTime": "2017-08-06T22:09:30.740323Z"
-}]
-```
-
-In order to prove endpoint ownership, echo back the validation code in the validationResponse property, as shown in the following example:
-
-```json
-{
-  "validationResponse": "512d38b6-c7b8-40c8-89fe-f46f9e9622b6"
-}
-```
-
-Finally, it is important to note that Azure Event Grid only supports HTTPS webhook endpoints.
-
-## Event subscription
-
-To subscribe to an event, you must have the **Microsoft.EventGrid/EventSubscriptions/Write** permission on the required resource. You need this permission because you are writing a new subscription at the scope of the resource. The required resource differs based on whether you are subscribing to a system topic or custom topic. Both types are described in this section.
-
-### System topics (Azure service publishers)
-
-For system topics, you need permission to write a new event subscription at the scope of the resource publishing the event. The format of the resource is:
-`/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/{resource-provider}/{resource-type}/{resource-name}`
-
-For example, to subscribe to an event on a storage account named **myacct**, you need the Microsoft.EventGrid/EventSubscriptions/Write permission on:
-`/subscriptions/####/resourceGroups/testrg/providers/Microsoft.Storage/storageAccounts/myacct`
-
-### Custom topics
-
-For custom topics, you need permission to write a new event subscription at the scope of the Event Grid topic. The format of the resource is:
-`/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.EventGrid/topics/{topic-name}`
-
-For example, to subscribe to a custom topic named **mytopic**, you need the Microsoft.EventGrid/EventSubscriptions/Write permission on:
-`/subscriptions/####/resourceGroups/testrg/providers/Microsoft.EventGrid/topics/mytopic`
-
-## Topic publishing
-
-Topics use either Shared Access Signature (SAS) or key authentication. We recommend SAS, but key authentication provides simple programming, and is compatible with many existing webhook publishers. 
+## Authenticate publishing clients using SAS or key
+Custom topics use either Shared Access Signature (SAS) or key authentication. We recommend SAS, but key authentication provides simple programming, and is compatible with many existing webhook publishers.
 
 You include the authentication value in the HTTP header. For SAS, use **aeg-sas-token** for the header value. For key authentication, use **aeg-sas-key** for the header value.
 
 ### Key authentication
 
-Key authentication is the simplest form of authentication. Use the format: `aeg-sas-key: <your key>`
+Key authentication is the simplest form of authentication. Use the format: `aeg-sas-key: <your key>` in the message header.
 
 For example, you pass a key with:
 
 ```
-aeg-sas-key: VXbGWce53249Mt8wuotr0GPmyJ/nDT4hgdEj9DpBeRr38arnnm5OFg==
+aeg-sas-key: XXXXXXXX53249XX8XXXXX0GXXX/nDT4hgdEj9DpBeRr38arnnm5OFg==
+```
+
+You can also specify `aeg-sas-key` as a query parameter. 
+
+```
+https://<yourtopic>.<region>.eventgrid.azure.net/eventGrid/api/events?api-version=2019-06-01&&aeg-sas-key=XXXXXXXX53249XX8XXXXX0GXXX/nDT4hgdEj9DpBeRr38arnnm5OFg==
 ```
 
 ### SAS tokens
 
 SAS tokens for Event Grid include the resource, an expiration time, and a signature. The format of the SAS token is: `r={resource}&e={expiration}&s={signature}`.
 
-The resource is the path for the topic to which you are sending events. For example, a valid resource path is: `https://<yourtopic>.<region>.eventgrid.azure.net/eventGrid/api/events`
+The resource is the path for the event grid topic to which you're sending events. For example, a valid resource path is: `https://<yourtopic>.<region>.eventgrid.azure.net/eventGrid/api/events?api-version=2019-06-01`. To see all the supported API versions, see [Microsoft.EventGrid resource types](https://docs.microsoft.com/azure/templates/microsoft.eventgrid/allversions). 
 
 You generate the signature from a key.
 
@@ -131,109 +77,26 @@ static string BuildSharedAccessSignature(string resource, DateTime expirationUtc
 }
 ```
 
-## Management Access Control
+### Encryption at rest
 
-Azure Event Grid allows you to control the level of access given to different users to do various management operations such as list event subscriptions, create new ones, and generate keys. Event Grid utilizes Azure's Role Based Access Check (RBAC).
+All events or data written to disk by the Event Grid service are encrypted by a Microsoft-managed key ensuring that it's encrypted at rest. Additionally, the maximum period of time that events or data retained is 24 hours in adherence with the [Event Grid retry policy](delivery-and-retry.md). Event Grid will automatically delete all events or data after 24 hours, or the event time-to-live, whichever is less.
 
-### Operation types
+## Authenticate event delivery to webhook endpoints
+The following sections describe how to authenticate event delivery to webhook endpoints. You need to use a validation handshake mechanism irrespective of the method you use. See [Webhook event delivery](webhook-event-delivery.md) for details. 
 
-Azure event grid supports the following actions:
+### Using Azure Active Directory (Azure AD)
+You can secure the webhook endpoint that's used to receive events from Event Grid by using Azure AD. You'll need to create an Azure AD application, create a role and service principal in your application authorizing Event Grid, and configure the event subscription to use the Azure AD application. Learn how to [Configure Azure Active Directory with Event Grid](secure-webhook-delivery.md).
 
-* Microsoft.EventGrid/*/read
-* Microsoft.EventGrid/*/write
-* Microsoft.EventGrid/*/delete
-* Microsoft.EventGrid/eventSubscriptions/getFullUrl/action
-* Microsoft.EventGrid/topics/listKeys/action
-* Microsoft.EventGrid/topics/regenerateKey/action
+### Using client secret as a query parameter
+You can also secure your webhook endpoint by adding query parameters to the webhook destination URL specified as part of creating an Event Subscription. Set one of the query parameters to be a client secret such as an [access token](https://en.wikipedia.org/wiki/Access_token) or a shared secret. Event Grid service includes all the query parameters in every event delivery request to the webhook. The webhook service can retrieve and validate the secret. If the client secret is updated, event subscription also needs to be updated. To avoid delivery failures during this secret rotation, make the webhook accept both old and new secrets for a limited duration before updating the event subscription with the new secret. 
 
-The last three operations return potentially secret information, which gets filtered out of normal read operations. It is best practice for you to restrict access to these operations. Custom roles can be created using [Azure PowerShell](../active-directory/role-based-access-control-manage-access-powershell.md), [Azure Command-Line Interface (CLI)](../active-directory/role-based-access-control-manage-access-azure-cli.md), and the [REST API](../active-directory/role-based-access-control-manage-access-rest.md).
+As query parameters could contain client secrets, they are handled with extra care. They are stored as encrypted and are not accessible to service operators. They are not logged as part of the service logs/traces. When retrieving the Event Subscription properties, destination query parameters aren't returned by default. For example: [--include-full-endpoint-url](https://docs.microsoft.com/cli/azure/eventgrid/event-subscription?view=azure-cli-latest#az-eventgrid-event-subscription-show) parameter is to be used in Azure [CLI](https://docs.microsoft.com/cli/azure?view=azure-cli-latest).
 
-### Enforcing Role Based Access Check (RBAC)
+For more information on delivering events to webhooks, see [Webhook event delivery](webhook-event-delivery.md)
 
-Use the following steps to enforce RBAC for different users:
-
-#### Create a custom role definition file (.json)
-
-The following are sample Event Grid role definitions that allow users to perform different sets of actions.
-
-**EventGridReadOnlyRole.json**: Only allow read-only operations.
-
-```json
-{
-  "Name": "Event grid read only role",
-  "Id": "7C0B6B59-A278-4B62-BA19-411B70753856",
-  "IsCustom": true,
-  "Description": "Event grid read only role",
-  "Actions": [
-    "Microsoft.EventGrid/*/read"
-  ],
-  "NotActions": [
-  ],
-  "AssignableScopes": [
-    "/subscriptions/<Subscription Id>"
-  ]
-}
-```
-
-**EventGridNoDeleteListKeysRole.json**: Allow restricted post actions but disallow delete actions.
-
-```json
-{
-  "Name": "Event grid No Delete Listkeys role",
-  "Id": "B9170838-5F9D-4103-A1DE-60496F7C9174",
-  "IsCustom": true,
-  "Description": "Event grid No Delete Listkeys role",
-  "Actions": [
-    "Microsoft.EventGrid/*/write",
-    "Microsoft.EventGrid/eventSubscriptions/getFullUrl/action"
-    "Microsoft.EventGrid/topics/listkeys/action",
-    "Microsoft.EventGrid/topics/regenerateKey/action"
-  ],
-  "NotActions": [
-    "Microsoft.EventGrid/*/delete"
-  ],
-  "AssignableScopes": [
-    "/subscriptions/<Subscription id>"
-  ]
-}
-```
-
-**EventGridContributorRole.json**: Allows all event grid actions.
-
-```json
-{
-  "Name": "Event grid contributor role",
-  "Id": "4BA6FB33-2955-491B-A74F-53C9126C9514",
-  "IsCustom": true,
-  "Description": "Event grid contributor role",
-  "Actions": [
-    "Microsoft.EventGrid/*/write",
-    "Microsoft.EventGrid/*/delete",
-    "Microsoft.EventGrid/topics/listkeys/action",
-    "Microsoft.EventGrid/topics/regenerateKey/action",
-    "Microsoft.EventGrid/eventSubscriptions/getFullUrl/action"
-  ],
-  "NotActions": [],
-  "AssignableScopes": [
-    "/subscriptions/<Subscription id>"
-  ]
-}
-```
-
-#### Create and assign custom role with Azure CLI
-
-To create a custom role, use:
-
-```azurecli
-az role definition create --role-definition @<file path>
-```
-
-To assign the role to a user, use:
-
-```azurecli
-az role assignment create --assignee <user name> --role "<name of role>"
-```
+> [!IMPORTANT]
+Azure Event Grid only supports **HTTPS** webhook endpoints. 
 
 ## Next steps
 
-* For an introduction to Event Grid, see [About Event Grid](overview.md)
+- For an introduction to Event Grid, see [About Event Grid](overview.md)

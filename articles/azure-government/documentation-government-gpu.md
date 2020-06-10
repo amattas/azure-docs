@@ -1,6 +1,6 @@
 ---
-title: Azure Government Getting Started with GPUs | Microsoft Docs
-description: Getting Started with GPUs on Azure Government
+title: GPUs on Azure Government | Microsoft Docs
+description: This article provides information on how to get started with GPUs on Azure Government.
 services: azure-government
 cloud: gov
 documentationcenter: ''
@@ -14,11 +14,11 @@ ms.topic: article
 ms.tgt_pltfrm: na
 ms.workload: azure-government
 ms.date: 10/31/2017
-ms.author: yujhongmicrosoft
-
+ms.author: femila
+ms.custom: references_regions
 ---
 
-# Getting Started with GPUs on Azure Government
+# GPUs on Azure Government
 This page will help you get started using GPUs on Azure Government. 
 ## Prerequisites
 To get started with GPUs and Data Science VMs on Azure Government, you must have an active Azure Government subscription.

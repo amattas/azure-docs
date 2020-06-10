@@ -3,7 +3,7 @@ title: Update your StorSimple device | Microsoft Docs
 description: Explains how to use the StorSimple update feature to install regular and maintenance mode updates and hotfixes.
 services: storsimple
 documentationcenter: NA
-author: SharS
+author: twooley
 manager: carmonm
 editor: ''
 
@@ -13,8 +13,8 @@ ms.devlang: NA
 ms.topic: article
 ms.tgt_pltfrm: NA
 ms.workload: TBD
-ms.date: 11/03/2017
-ms.author: v-sharos
+ms.date: 01/23/2018
+ms.author: twooley
 
 ---
 # Update your StorSimple 8000 Series device
@@ -80,22 +80,22 @@ If you need to apply Maintenance mode updates, you will receive an alert through
 > 
 > 
 
-### Step 1: Connect to the serial console <a name="step1">
+### Step 1: Connect to the serial console <a name="step1"></a>
 First, use an application such as PuTTY to access the serial console. The following procedure explains how to use PuTTY to connect to the serial console.
 
 [!INCLUDE [storsimple-use-putty](../../includes/storsimple-use-putty.md)]
 
-### Step 2: Enter Maintenance mode <a name="step2">
+### Step 2: Enter Maintenance mode <a name="step2"></a>
 After you connect to the console, determine whether there are updates to install, and enter Maintenance mode to install them.
 
 [!INCLUDE [storsimple-enter-maintenance-mode](../../includes/storsimple-enter-maintenance-mode.md)]
 
-### Step 3: Install your updates <a name="step3">
+### Step 3: Install your updates <a name="step3"></a>
 Next, install your updates.
 
 [!INCLUDE [storsimple-install-maintenance-mode-updates](../../includes/storsimple-install-maintenance-mode-updates.md)]
 
-### Step 4: Exit Maintenance mode <a name="step4">
+### Step 4: Exit Maintenance mode <a name="step4"></a>
 Finally, exit Maintenance mode.
 
 [!INCLUDE [storsimple-exit-maintenance-mode](../../includes/storsimple-exit-maintenance-mode.md)]
@@ -113,7 +113,7 @@ The following procedures explain how to use Windows PowerShell for StorSimple to
 [!INCLUDE [storsimple-install-maintenance-mode-hotfixes](../../includes/storsimple-install-maintenance-mode-hotfixes.md)]
 
 ## What happens to updates if you perform a factory reset of the device?
-If a device is reset to factory settings, then all the updates are lost. After the factory-reset device is registered and configured, you will need to manually install updates through the Azure classic portal and/or Windows PowerShell for StorSimple. For more information about factory reset, see [Reset the device to factory default settings](storsimple-manage-device-controller.md#reset-the-device-to-factory-default-settings).
+If a device is reset to factory settings, then all the updates are lost. After the factory-reset device is registered and configured, you will need to manually install updates through the Azure classic portal and/or Windows PowerShell for StorSimple. For more information about factory reset, see [Reset the device to factory default settings](storsimple-8000-manage-device-controller.md#reset-the-device-to-factory-default-settings).
 
 ## Next steps
 * Learn more about [using Windows PowerShell for StorSimple to administer your StorSimple device](storsimple-windows-powershell-administration.md).

@@ -1,6 +1,6 @@
 ---
 title: Azure Government Compute | Microsoft Docs
-description: This provides a comparision of features and guidance on developing applications for Azure Government
+description: This provides a comparison of features and guidance on developing applications for Azure Government
 services: azure-government
 cloud: gov
 documentationcenter: ''
@@ -13,7 +13,7 @@ ms.devlang: na
 ms.topic: article
 ms.tgt_pltfrm: na
 ms.workload: azure-government
-ms.date: 8/30/2017
+ms.date: 3/27/2018
 ms.author: kydeeds
 
 ---
@@ -23,6 +23,17 @@ For details on this service and how to use it, see [Azure Virtual Machines Sizes
 
 ### Variations
 For available virtual machine sizes in Azure Government, see <a href="https://azure.microsoft.com/regions/services/">Products Available by Region</a>
+
+The following Virtual Machines features are not currently available in Azure Government:
+
+- Settings
+  - Continuous delivery
+- Operations
+  - Auto-Shutdown
+- Monitoring
+  - Application Insights
+- Support + Troubleshooting
+  - Ubuntu Advantage support plan
 
 ### Data Considerations
 The following information identifies the Azure Government boundary for Azure Virtual Machines:
@@ -55,37 +66,25 @@ The DNS for the Cloud Services is different:
 
 | Service Type | Azure Public | Azure Government |
 | --- | --- | --- |
-| Batch | *.cloudapp.net | *.usgovcloudapp.net |
+| Cloud Services | *.cloudapp.net | *.usgovcloudapp.net |
 
 ## Azure Functions
 The [Azure Functions](https://docs.microsoft.com/azure/azure-functions/) service is now available (General Availability) for the Azure Government environment, with some differences, which you can read about below. 
 
 ### Variations
-The following Functions features are not currently available in Azure Government:
 
-- Provisioning and management of Azure Functions is available through PowerShell, CLI and Visual Studio. There is no portal support yet.
-- The [App Service plan](../azure-functions/functions-scale.md#app-service-plan) is available in Azure Government. The Consumption plan is not available yet. To learn more about the two hosting plans, click [here](../azure-functions/functions-scale.md)
+-  Azure Functions feature [Monitoring via Application Insights](../azure-functions/functions-monitoring.md) for Azure Government enviorment is only available for Azure Functions V2/V3 and not for Azure Functions V1.
+
 
 The URLs for Function are different:
 
 | Service Type | Azure Public | Azure Government |
 | --- | --- | --- |
 | Functions | .azurewebsites.net | .azurewebsites.us|	
-	
-### Quickstarts
-The [Functions Quickstart for Government](documentation-government-functions.md) will guide you through creating your first Azure Function on Azure Government and contains other useful tutorials. 
-
-## Azure Container Service
-This service is available for Preview in Azure Government. 
-For details on this service and how to use it, see [Azure Container Service documentation](../container-service/index.yml). 
-
-### Variations
-Azure Container Service does not yet have Portal support in Azure Government. 
 
 ## Service Fabric
 For details on this service and how to use it, see [Azure Service Fabric documentation](../service-fabric/service-fabric-overview.md).
 
 ## Next Steps
-For supplemental information and updates, subscribe to the
-<a href="https://blogs.msdn.microsoft.com/azuregov/">Microsoft Azure Government Blog. </a>
+For supplemental information and updates, subscribe to the [Microsoft Azure Government Blog](https://blogs.msdn.microsoft.com/azuregov/).
 

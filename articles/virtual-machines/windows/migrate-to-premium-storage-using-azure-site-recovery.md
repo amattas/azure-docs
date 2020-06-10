@@ -1,25 +1,16 @@
 ---
-title: Migrate your Windows VMs to Azure Premium Storage with Azure Site Recovery | Microsoft Docs
+title: Migrate your Windows VMs to Azure Premium Storage with Azure Site Recovery 
 description: Migrate your existing virtual machines to Azure Premium Storage by using Site Recovery. Premium Storage offers high-performance, low-latency disk support for I/O-intensive workloads running on Azure Virtual Machines.
-services: virtual-machines-windows
-cloud: Azure
-documentationcenter: na
 author: luywang
-manager: jeconnoc
-
-ms.assetid:
 ms.service: virtual-machines-windows
-ms.workload: infrastructure-services
-ms.tgt_pltfrm: na
-ms.devlang: na
-ms.topic: article
+ms.topic: how-to
 ms.date: 08/15/2017
 ms.author: luywang
-
+ms.subservice: disks
 ---
 # Migrate to Premium Storage by using Azure Site Recovery
 
-[Azure Premium Storage](premium-storage.md) delivers high-performance, low-latency disk support for virtual machines (VMs) that are running I/O-intensive workloads. This guide helps you migrate your VM disks from a standard storage account to a premium storage account by using [Azure Site Recovery](../../site-recovery/site-recovery-overview.md).
+[Azure premium SSDs](disks-types.md) deliver high-performance, low-latency disk support for virtual machines (VMs) that are running I/O-intensive workloads. This guide helps you migrate your VM disks from a standard storage account to a premium storage account by using [Azure Site Recovery](../../site-recovery/site-recovery-overview.md).
 
 Site Recovery is an Azure service that contributes to your strategy for business continuity and disaster recovery by orchestrating the replication of on-premises physical servers and VMs to the cloud (Azure) or to a secondary datacenter. When outages occur in your primary location, you fail over to the secondary location to keep applications and workloads available. You fail back to your primary location when it returns to normal operation. 
 
@@ -77,8 +68,10 @@ You can use Site Recovery to migrate Azure IaaS VMs between regions or within sa
 ### Step 1: Create a Recovery Services vault
 
 1. Open the [Azure portal](https://portal.azure.com).
-2. Select **New** > **Management** > **Backup** and **Site Recovery (OMS)**. Alternatively, you can select **Browse** > **Recovery Services Vault** > **Add**. 
-3. Specify a region that VMs will be replicated to. For the purpose of migration in the same region, select the region where your source VMs and source storage accounts are. 
+2. Select **Create a resource** > **Management** > **Backup and Site Recovery (OMS)**. Alternatively, you can select **Browse** > **Recovery Services Vault** > **Add**.
+   >[!NOTE]
+   >Backup and Site Recovery was formerly part of the [OMS suite](/azure/azure-monitor/terminology#april-2018---retirement-of-operations-management-suite-brand).
+1. Specify a region that VMs will be replicated to. For the purpose of migration in the same region, select the region where your source VMs and source storage accounts are. 
 
 ### Step 2: Choose your protection goals 
 
@@ -196,32 +189,30 @@ Site Recovery will create a VM instance whose type is the same as or similar to 
 ## Post-migration steps
 
 1. **Configure replicated VMs to the availability set if applicable**. Site Recovery does not support migrating VMs along with the availability set. Depending on the deployment of your replicated VM, do one of the following:
-   * For a VM created through the classic deployment model: Add the VM to the availability set in the Azure portal. For detailed steps, go to [Add an existing virtual machine to an availability set](../linux/classic/configure-availability.md#addmachine).
+   * For a VM created through the classic deployment model: Add the VM to the availability set in the Azure portal. For detailed steps, go to [Add an existing virtual machine to an availability set](../linux/classic/configure-availability-classic.md).
    * For a VM created through the Resource Manager deployment model: Save your configuration of the VM and then delete and re-create the VMs in the availability set. To do so, use the script at [Set Azure Resource Manager VM Availability Set](https://gallery.technet.microsoft.com/Set-Azure-Resource-Manager-f7509ec4). Before you run this script, check its limitations and plan your downtime.
 
-2. **Delete old VMs and disks**. Make sure that the Premium disks are consistent with source disks and that the new VMs perform the same function as the source VMs. In the Resource Manager deployment model, delete the VM and delete the disks from your source storage accounts in the Azure portal. In the classic deployment model, you can delete the VM and disks in the classic portal or the Azure portal. If there's a problem in which the disk is not deleted even though you deleted the VM, see [Troubleshoot errors when you delete VHDs](../../storage/common/storage-resource-manager-cannot-delete-storage-account-container-vhd.md).
+2. **Delete old VMs and disks**. Make sure that the Premium disks are consistent with source disks and that the new VMs perform the same function as the source VMs. Delete the VM and delete the disks from your source storage accounts in the Azure portal. If there's a problem in which the disk is not deleted even though you deleted the VM, see [Troubleshoot storage resource deletion errors](storage-resource-deletion-errors.md).
 
 3. **Clean the Azure Site Recovery infrastructure**. If Site Recovery is no longer needed, you can clean its infrastructure. Delete replicated items, the configuration server, and the recovery policy, and then delete the Azure Site Recovery vault.
 
 ## Troubleshooting
 
 * [Monitor and troubleshoot protection for virtual machines and physical servers](../../site-recovery/site-recovery-monitoring-and-troubleshooting.md)
-* [Microsoft Azure Site Recovery forum](https://social.msdn.microsoft.com/Forums/azure/home?forum=hypervrecovmgr)
+* [Microsoft Q&A question page for Microsoft Azure Site Recovery](https://docs.microsoft.com/answers/topics/azure-site-recovery.html)
 
 ## Next steps
 
 For specific scenarios for migrating virtual machines, see the following resources:
 
 * [Migrate Azure Virtual Machines between Storage Accounts](https://azure.microsoft.com/blog/2014/10/22/migrate-azure-virtual-machines-between-storage-accounts/)
-* [Create and upload a Windows Server VHD to Azure](classic/createupload-vhd.md?toc=%2fazure%2fvirtual-machines%2fwindows%2fclassic%2ftoc.json)
-* [Creating and uploading a virtual hard disk that contains the Linux operating system](../linux/classic/create-upload-vhd.md?toc=%2fazure%2fvirtual-machines%2flinux%2fclassic%2ftoc.json)
-* [Migrating Virtual Machines from Amazon AWS to Microsoft Azure](http://channel9.msdn.com/Series/Migrating-Virtual-Machines-from-Amazon-AWS-to-Microsoft-Azure)
+* [Create and upload a Windows Server VHD to Azure](upload-generalized-managed.md)
+* [Migrating Virtual Machines from Amazon AWS to Microsoft Azure](https://channel9.msdn.com/Series/Migrating-Virtual-Machines-from-Amazon-AWS-to-Microsoft-Azure)
 
 Also, see the following resources to learn more about Azure Storage and Azure Virtual Machines:
 
 * [Azure Storage](https://azure.microsoft.com/documentation/services/storage/)
 * [Azure Virtual Machines](https://azure.microsoft.com/documentation/services/virtual-machines/)
-* [Premium Storage: High-performance storage for Azure virtual machine workloads](premium-storage.md)
 
 [1]:./media/migrate-to-premium-storage-using-azure-site-recovery/migrate-to-premium-storage-using-azure-site-recovery-1.png
 [2]:./media/migrate-to-premium-storage-using-azure-site-recovery/migrate-to-premium-storage-using-azure-site-recovery-2.png
